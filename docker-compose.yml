@@ -1,0 +1,42 @@
+version: "2"
+services:
+  mydb:
+    image: mysql:5.7
+    container_name: "mydb"
+    privileged: true
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./myData:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    command: "--character-set-server=utf8"
+  myredis:
+    image: redis:4.0.0
+    container_name: "myredis"
+    privileged: true
+    ports:
+      - "6379:6379"
+  mynginx:
+    image: nginx
+    container_name: "mynginx"
+    privileged: true
+    ports:
+      - "80:80"
+    links:
+      - "myphp"
+    volumes:
+      - ../:/usr/share/nginx/html
+      - ./config:/etc/nginx/conf.d
+  myphp:
+    image: taohuaxia/php:7.2-fpm
+    container_name: "myphp"
+    privileged: true
+    ports:
+      - "9000:9000"
+    volumes:
+      - ../:/var/www/html
+      - ./config/php.ini:/usr/local/etc/php/php.ini
+    links:
+      - "mydb"
+      - "myredis"
