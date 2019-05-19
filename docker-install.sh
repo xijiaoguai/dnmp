@@ -10,6 +10,8 @@ sudo yum remove docker \
                   docker-engine-selinux \
                   docker-engine
 
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+
 sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 
 sudo yum makecache fast
@@ -29,6 +31,16 @@ sudo tee /etc/docker/daemon.json <<-'EOF'
 }
 EOF
 
-curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo rm /usr/local/bin/docker-compose
+
+curl -L https://get.daocloud.io/docker/compose/releases/download/1.22.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 
 chmod +x /usr/local/bin/docker-compose
+
+sudo rm -rf /etc/init.d/docker.sh
+
+sudo touch /etc/init.d/docker.sh
+
+sudo chmod +x /etc/init.d/docker.sh
+
+echo "sudo systemctl start docker" >> /etc/init.d/docker.sh
